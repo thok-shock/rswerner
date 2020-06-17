@@ -1,0 +1,48 @@
+/*https://coolors.co/252323-70798c-f5f1ed-dad2bc-a99985*/
+
+.vh-95 {
+    height: 95vh;
+}
+
+.clear-padding-left {
+    padding-left: 0px;
+}
+
+.clear-padding-right {
+    padding-right: 0px;
+}
+
+.top-img {
+    position: relative;
+    width: 100%;
+}
+
+.max-vh {
+    max-height: 95vh;
+}
+
+.secondary-gray {
+    background-color: #70798C;
+    color: white;
+}
+
+.tertiary-gray {
+    background-color: #F5F1ED;
+}
+
+.primary-gray {
+    background-color: #252323;
+    color: white;
+}
+
+.who-am-i li {
+    margin-top: 10px;
+}
+
+.about-paragraphs {
+    width: 40%;
+    line-height: 1.8rem;
+    min-width: 550px;
+    max-width: 1200px;
+    padding: 5px;
+}
