@@ -1,10 +1,91 @@
 import React from "react";
 import { Container, Row, Col, Button, Form } from "react-bootstrap";
+import AddProjectModal from './ProjectModals/AddProjectModal'
+import ProjectList from "./ProjectList";
 
 export default class FrontPage extends React.Component {
   constructor(props) {
     super(props);
-  }
+    this.state = {
+        addProjectModalOpen: false,
+        projects: []
+    }
+
+    this.closeProjectModal = this.closeProjectModal.bind(this)
+    this.openProjectModal = this.openProjectModal.bind(this)
+}
+
+
+
+componentDidMount() {
+    fetch('/projects', {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    })
+    .then(res => {
+        if (!res && res.status != 200) {
+            throw('Internal Server Error')
+        } else {
+            return res.json()
+        }
+    })
+    .then(res => {
+        this.setState({
+            projects: res
+        })
+    })
+    .catch(err => {
+        alert('Something went wrong')
+        console.log(err)
+    })
+}
+
+openProjectModal() {
+    this.setState({
+        addProjectModalOpen: true
+    })
+}
+
+closeProjectModal() {
+    this.setState({
+        addProjectModalOpen: false
+    })
+}
+
+determineRenderAddProjectButton() {
+    if (this.props && this.props.admin) {
+        return <Button onClick={this.openProjectModal} className='ml-2' variant='outline-success'>Add Project</Button>
+    } else {
+        return null;
+    }
+}
+smoothScroll(target) {
+    var scrollContainer = target;
+    console.log(scrollContainer)
+    do { //find scroll container
+        scrollContainer = scrollContainer.parentNode;
+        if (!scrollContainer) return;
+        scrollContainer.scrollTop += 1;
+    } while (scrollContainer.scrollTop == 0);
+
+    var targetY = 0;
+    do { //find the top of target relatively to the container
+        if (target == scrollContainer) break;
+        targetY += target.offsetTop;
+    } while (target = target.offsetParent);
+
+    scroll = function(c, a, b, i) {
+        i++; if (i > 30) return;
+        c.scrollTop = a + (b - a) / 30 * i;
+        setTimeout(function(){ scroll(c, a, b, i); }, 20);
+    }
+    // start scrolling
+    scroll(scrollContainer, scrollContainer.scrollTop, targetY, 0);
+}
+
+
 
   //https://coolors.co/252323-70798c-f5f1ed-dad2bc-a99985
 
@@ -16,7 +97,7 @@ export default class FrontPage extends React.Component {
             <Col md={4} className="pr-0">
               <img
                 className="top-img max-vh"
-                src="./src/img/ryan_bucky.jpg"
+                src="./img/ryan_bucky.jpg"
               ></img>
             </Col>
             <Col md={8} className="text-center m-auto">
@@ -26,20 +107,20 @@ export default class FrontPage extends React.Component {
                   Student Pharmacist, Web Dev, Cameraman, Luna Enthusiast . . .
                 </p>
                 <div>
-                  <Button className="m-2" variant="outline-primary">
+                  <Button className="m-2" variant="outline-primary" onClick={e => {this.smoothScroll(document.getElementById('who-am-i'))}}>
                     Get to Know Me
                   </Button>
-                  <Button className="m-2" variant="outline-primary">
+                  <Button className="m-2" variant="outline-primary" onClick={e => {this.smoothScroll(document.getElementById('portfolio'))}}>
                     See What I've Done
                   </Button>
                 </div>
               </div>
             </Col>
           </Row>
-          <Row className="primary-gray">
+          <Row className="primary-gray" id='who-am-i'>
             <Col md={12} className='mb-5'>
               <div className="text-center">
-                <h1 className="m-5 text-underline">Who Am I?</h1>
+                <h1 className="m-5 text-underline" >Who Am I?</h1>
               </div>
               <div className="m-auto">
                 <div className="d-flex flex-row flex-overflow justify-content-center">
@@ -79,7 +160,7 @@ export default class FrontPage extends React.Component {
               </div>
             </Col>
           </Row>
-          <Row className='tertiary-gray'>
+          <Row className='tertiary-gray' id='portfolio'>
             <Col>
             <div className='m-5 text-center'>
             <h1>My Portfolio</h1>
@@ -93,13 +174,15 @@ export default class FrontPage extends React.Component {
                 </Form.Group>
                 <Form.Group >
                 <Button className='ml-2'>Search</Button>
+                {this.determineRenderAddProjectButton()}
                 </Form.Group>
                 </Form.Row>
-                
             </Form>
+            <ProjectList projects={this.state.projects} />
             </Col>
           </Row>
         </Container>
+        <AddProjectModal show={this.state.addProjectModalOpen} close={this.closeProjectModal}/>
       </div>
     );
   }
