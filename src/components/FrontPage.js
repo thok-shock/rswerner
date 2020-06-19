@@ -92,16 +92,12 @@ smoothScroll(target) {
   render() {
     return (
       <div>
-        <Container fluid className="clear-padding-left">
+        <Container fluid>
           <Row>
-            <Col md={4} className="pr-0">
-              <img
-                className="top-img max-vh"
-                src="./img/ryan_bucky.jpg"
-              ></img>
-            </Col>
-            <Col md={8} className="text-center m-auto">
-              <div className="p-5">
+            <Col md={12} className="text-center m-auto p-0">
+              <video muted autoPlay loop width='100%' src='./img/ryan-preview.mp4' type='video/mp4'>
+              </video>
+              <div className="p-5 center-over-video">
                 <h1 className="display-3 font-weight-normal">Ryan S Werner</h1>
                 <p className="text-muted font-weight-light">
                   Student Pharmacist, Web Dev, Cameraman, Luna Enthusiast . . .
