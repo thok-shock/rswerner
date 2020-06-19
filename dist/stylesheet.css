@@ -80,16 +80,22 @@
         border-radius: 8px;
         transition: 0.5s;
         white-space:nowrap;
+        overflow: hidden;
+        padding: 1px !important;
     }
     
     .center-over-video:hover {
         background-color: rgba(245, 241, 237, 1);
-        padding:60px !important;
+        padding:0px !important;
     }
     .about-paragraphs {
         line-height: 1.8rem;
         padding: 5px;
         padding-right: 5%;
         padding-left: 5%;
+    }
+
+    .title-text {
+        font-size: 3em;
     }
   }

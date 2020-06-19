@@ -98,7 +98,7 @@ smoothScroll(target) {
               <video muted autoPlay loop width='100%' src='./img/ryan-preview.mp4' type='video/mp4'>
               </video>
               <div className="p-5 center-over-video tertiary-gray shadow">
-                <h1 className="display-3 font-weight-normal">Ryan S Werner</h1>
+                <h1 className="display-3 font-weight-normal title-text">Ryan S Werner</h1>
                 <p className="text-muted font-weight-light">
                   Student Pharmacist, Web Dev, Cameraman, Luna Enthusiast . . .
                 </p>
