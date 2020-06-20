@@ -3,7 +3,25 @@
 const express = require("express");
 const db = require("./database");
 const path = require('path')
+const fileUpload = require('express-fileupload')
 const currPath = path.join(__dirname, '../dist/')
+const multer = require('multer')
+const crypto = require('crypto')
+const mime = require(
+  'mime'
+)
+var storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, '../dist/uploads')
+  },
+  filename: function (req, file, cb) {
+    crypto.pseudoRandomBytes(16, function (err, raw) {
+      cb(null, raw.toString('hex') + Date.now() + '.' + mime.extension(file.mimetype));
+    });
+  }
+});
+var upload = multer({ storage: storage });
+const fs = require('fs')
 //console.log(currPath)
 const {
   getAllProjects,
@@ -13,6 +31,14 @@ const {
 } = require("./functions");
 
 const App = express();
+
+App.use(
+  express.urlencoded({
+      extended: true
+  })
+);
+
+App.use(express.json());
 
 const secretCode = process.env.secretCode;
 
@@ -49,9 +75,19 @@ App.get("/projects", (req, res) => {
     });
 });
 
-App.post("/projects", (req, res) => {
+const uploadRouter = express.Router()
+App.use('/upload', uploadRouter);
+
+uploadRouter.get('/:uri', (req, res) => {
+  res.sendFile(currPath + '/uploads/' + req.params.uri)
+})
+
+App.post("/projects", upload.single('file'), (req, res) => {
+  //console.log(req)
+  //console.log(req.body)
   if (req.body.secretCode == secretCode) {
-    createNewProject()
+    req.body.imageLink = req.file.filename
+    createNewProject(req.body)
       .then((row) => {
         res.json(row);
       })

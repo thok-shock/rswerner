@@ -68,6 +68,24 @@
     padding:60px !important;
 }
 
+.black-text {
+    color: black;
+}
+
+.project {
+    height: 500px;
+    min-width: 350px;
+}
+
+.project div img {
+    
+}
+
+.project-image {
+    height: 50%;
+    object-fit: cover;
+}
+
 @media only screen and (max-width: 768px) {
     
     .center-over-video {

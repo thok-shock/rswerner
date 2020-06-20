@@ -22,8 +22,8 @@ function getAllProjects() {
 function createNewProject(data) {
     return new Promise((resolve, reject) => {
         db.query({
-            sql: 'INSERT INTO projects (title, description, status, link, projectDate, keywords, imageLink, upvotes) VALUES (?, ?, ?, ?, ?, ?, ?, ?);',
-            values: [data.title, data.description, data.status, data.link, data.projectDate, data.keywords, data.imageLink, data.upvotes]
+            sql: 'INSERT INTO projects (title, description, status, link, projectDate, keywords, imageLink) VALUES (?, ?, ?, ?, ?, ?, ?);',
+            values: [data.title, data.description, data.status, data.link, data.projectDate, data.keywords, data.imageLink]
         }, function(err, row) {
             if (err) {
                 console.log(err);

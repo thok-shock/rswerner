@@ -21,7 +21,7 @@ export default class ProjectList extends React.Component {
 
 
     render() {
-        return <div className='d-flex flex-row justify-content-center m-5'>
+        return <div className='d-flex flex-row justify-content-center m-5 flex-wrap'>
             {this.listProjects()}
         </div>
     }

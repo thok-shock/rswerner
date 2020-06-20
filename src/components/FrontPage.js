@@ -13,6 +13,7 @@ export default class FrontPage extends React.Component {
 
     this.closeProjectModal = this.closeProjectModal.bind(this)
     this.openProjectModal = this.openProjectModal.bind(this)
+    this.createProject = this.createProject.bind(this);
 }
 
 
@@ -83,6 +84,33 @@ smoothScroll(target) {
     }
     // start scrolling
     scroll(scrollContainer, scrollContainer.scrollTop, targetY, 0);
+}
+
+doThing() {
+  fetch('https://medium.com/feed/@baileyconradt').then(response => response.text())
+  .then(str => new window.DOMParser().parseFromString(str, "text/xml")).then(res => {console.log(res)})
+}
+
+createProject(data) {
+  fetch('./projects', {
+    method: 'POST',
+    body: data
+  }).then(res => {
+    if (res.status != 200 && res.status != 201) {
+      throw('Encountered Error')
+    } else {
+      return res.json()
+    }
+  })
+  .then(res => {
+    let newProjects = JSON.parse(JSON.stringify(this.state.projects));
+    newProjects.push(res)
+    this.setState({projects: newProjects, addProjectModalOpen: false})
+  })
+  .catch(err => {
+    console.log(err);
+    alert('Something went wrong')
+  })
 }
 
 
@@ -178,7 +206,9 @@ smoothScroll(target) {
             </Col>
           </Row>
         </Container>
-        <AddProjectModal show={this.state.addProjectModalOpen} close={this.closeProjectModal}/>
+        <div className='tertiary-gray'>
+        <AddProjectModal show={this.state.addProjectModalOpen} close={this.closeProjectModal} createProject={this.createProject} />
+        </div>
       </div>
     );
   }
