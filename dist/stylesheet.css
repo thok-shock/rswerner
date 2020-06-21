@@ -49,7 +49,7 @@
 }
 
 .w-24 {
-    width: 24%;
+    max-width: 500px;
 }
 
 .center-over-video {
@@ -73,7 +73,6 @@
 }
 
 .project {
-    height: 500px;
     min-width: 350px;
 }
 
@@ -84,6 +83,36 @@
 .project-image {
     height: 50%;
     object-fit: cover;
+}
+
+.status {
+    text-align: center;
+}
+
+.status-area {
+    position: absolute;
+    top: 2%;
+    left: 4%;
+    padding: 5px;
+    padding-left: 10px;
+    padding-right: 10px;
+    border-radius: 8px;
+    background-color: white;
+}
+
+.status-green {
+    background-color: rgb(17, 133, 17);
+    color: white;
+}
+
+.status-blue {
+    background-color: rgb(23, 23, 63);
+    color: white;
+}
+
+.status-yellow {
+    background-color: rgb(255, 255, 0);
+    color: black;
 }
 
 @media only screen and (max-width: 768px) {

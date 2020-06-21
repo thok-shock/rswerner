@@ -12,7 +12,7 @@ export default class ProjectList extends React.Component {
     listProjects() {
         if (this.props && this.props.projects && this.props.projects.length > 0) {
             return this.props.projects.map((project) => {
-                return <Project key={project.projectID} project={project}></Project>
+                return <Project key={project.projectID} project={project} admin={this.props.admin} deleteProject={this.props.deleteProject} modifyProject={this.props.modifyProject}></Project>
             })
         } else {
             return <p>Loading ...</p>

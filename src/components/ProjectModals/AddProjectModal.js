@@ -70,7 +70,6 @@ export default class AddProjectModal extends React.Component {
                         <Form.Control name='link' required></Form.Control>
                     </Form.Group>
                     </Form.Row>
-                    <Button onClick={this.test}>test</Button>
                     <Button variant='success' onClick={this.createProject}>Submit</Button>
                     <Button variant='outline-danger' className='ml-2' onClick={this.props.close}>Cancel</Button>
                 </Form>

@@ -97,13 +97,37 @@ App.post("/projects", upload.single('file'), (req, res) => {
   }
 });
 
-App.delete("/projects", (req, res) => {
+App.put('/projects', upload.single('file'), (req, res) => {
   if (req.body.secretCode == secretCode) {
-    deleteProject()
-      .then((row) => [res.json(row)])
+    req.body.imageLink = req.file.filename
+    modifyProject(req.body)
+    .then((row) => {
+      res.json(row);
+    })
+    .catch(err => {
+      console.log(err)
+      res.status(500);
+    });
+  } else {
+    res.status(400)
+  }
+})
+
+App.delete("/projects", (req, res) => {
+  //console.log('here')
+  if (req.body.secretCode == secretCode) {
+    deleteProject(req.body)
+      .then((row) => {
+        console.log('sending json...')
+        res.json(row)
+      })
       .catch((err) => {
+        console.log(err)
         res.status(500);
+        res.send(err)
       });
+  } else {
+    res.status(400);
   }
 });
 

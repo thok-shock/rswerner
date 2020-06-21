@@ -14,6 +14,8 @@ export default class FrontPage extends React.Component {
     this.closeProjectModal = this.closeProjectModal.bind(this)
     this.openProjectModal = this.openProjectModal.bind(this)
     this.createProject = this.createProject.bind(this);
+    this.deleteProject = this.deleteProject.bind(this);
+    this.modifyProject = this.modifyProject.bind(this)
 }
 
 
@@ -113,6 +115,69 @@ createProject(data) {
   })
 }
 
+deleteProject(id, code) {
+  fetch('./projects', {
+    method: 'DELETE',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({projectID: id, secretCode: code})
+  }).then(res => {
+    if (res.status != 200) {
+      throw('Deletion Error')
+    } else {
+      return res.json()
+    }
+  }).then(res => {
+    let newArray = JSON.parse(JSON.stringify(this.state.projects))
+    newArray = newArray.filter(project => {
+      if (parseInt(project.projectID) === parseInt(id)) {
+        return false;
+      } else {
+        return true;
+      }
+    })
+    console.log(newArray)
+    this.setState({projects: newArray})
+  })
+  .catch(err => {
+    console.log(err);
+    alert('Something went wrong')
+  })
+}
+
+modifyProject(data) {
+  fetch('/projects', {
+    method: 'PUT',
+    body: data
+  })
+  .then(res => {
+    if (res.status != 200) {
+      throw('Server Error')
+    } else {
+      return res.json()
+    }
+  })
+  .then(res => {
+    let newArray = JSON.parse(JSON.stringify(this.state.projects));
+    newArray = newArray.map(project => {
+      if (project.projectID === res.projectID) {
+        return res;
+      } else {
+        return project;
+      }
+    })
+    //console.log(newArray)
+    this.setState({projects: newArray})
+
+  })
+  .catch(err => {
+    console.log(err)
+    alert('Something went wrong')
+  })
+
+}
+
 
 
   //https://coolors.co/252323-70798c-f5f1ed-dad2bc-a99985
@@ -202,7 +267,7 @@ createProject(data) {
                 </Form.Group>
                 </Form.Row>
             </Form>
-            <ProjectList projects={this.state.projects} />
+            <ProjectList projects={this.state.projects} admin={this.props.admin} deleteProject={this.deleteProject} modifyProject={this.modifyProject} />
             </Col>
           </Row>
         </Container>

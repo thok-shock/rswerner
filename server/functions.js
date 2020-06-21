@@ -45,16 +45,17 @@ function createNewProject(data) {
     })
 }
 
-function modifyProject() {
+function modifyProject(data) {
     return new Promise((resolve, reject) => {
         db.query({
-            sql: 'UPDATE projects SET title = ?, description = ?, status = ?, link = ?, projectDate = ?, keywords = ?, imageLink = ?, upvotes = ? WHERE data.projectID = ?;',
-            values: [data.title, data.description, data.status, data.link, data.projectDate, data.keywords, data.imageLink, data.upvotes, data.projectID]
+            sql: 'UPDATE projects SET title = ?, description = ?, status = ?, link = ?, projectDate = ?, keywords = ?, imageLink = ? WHERE projectID = ?;',
+            values: [data.title, data.description, data.status, data.link, data.projectDate, data.keywords, data.imageLink, data.projectID]
         }, function(err, row) {
             if (err) {
                 console.log(err);
                 reject(err);
             } else {
+                console.log(data.projectID)
                 db.query({
                     sql: 'SELECT * FROM projects WHERE projectID = ?;',
                     values: [data.projectID]
@@ -63,6 +64,7 @@ function modifyProject() {
                         console.log(err);
                         reject(err);
                     } else {
+                        console.log(row)
                         resolve(row[0])
                     }
                 })
@@ -71,7 +73,7 @@ function modifyProject() {
     })
 }
 
-function deleteProject() {
+function deleteProject(data) {
     return new Promise((resolve, reject) => {
         db.query({
             sql: 'DELETE FROM projects WHERE projectID = ?',

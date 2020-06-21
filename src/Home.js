@@ -11,28 +11,38 @@ class Home extends React.Component {
         }
     }
 
-    watch() {
-        window.addEventListener('keypress', (e) => {
-            if (e.key === 'r') {
-                window.addEventListener('keypress', e => {
-                    if (e.key === 'w') {
-                        window.addEventListener('keypress', e => {
-                            if (e.key === 'e') {
-                                window.addEventListener('keypress', e => {
-                                    if (e.key === 'r') {
-                                        this.setState({admin: true})
-                                    }
-                                })
-                            }
-                        })
-                    }
-                })
-            }
-        })
+    listenForR = (e) => {
+        if (e.key === 'r' && !this.state.admin) {
+            this.setState({admin: true}, () => {
+                window.removeEventListener('keypress', this.listenForE, false)
+                window.removeEventListener('keypress', this.listenForEtwo, false)
+                window.removeEventListener('keypress', this.listenForW, false)
+                window.removeEventListener('keypress', this.listenForR, false)
+            })
+        }
+    }
+    listenForEtwo = (e) => {
+        if (e.key ==='e' && !this.state.admin) {
+            window.addEventListener('keypress', this.listenForR, {once: true})
+        }
     }
 
+    listenForW = (e) => {
+        if (e.key === 'w' && !this.state.admin) {
+            window.addEventListener('keypress', this.listenForEtwo, {once: true})
+        }
+    }
+
+    listenForE = (e) => {
+        if (e.key === 'w' && !this.state.admin) {
+            window.addEventListener('keypress', this.listenForW, {once: true})
+        }
+    }
+
+
+
     render() {
-        this.watch();
+        this.listenForE();
         return <FrontPage admin={this.state.admin}/>
     }
 }
