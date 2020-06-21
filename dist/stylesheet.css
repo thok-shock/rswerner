@@ -81,7 +81,7 @@
 }
 
 .project-image {
-    height: 50%;
+    height: 300px;
     object-fit: cover;
 }
 
@@ -124,11 +124,14 @@
     left: unset;
     transform: unset;
         background-color: rgba(245, 241, 237, 0.9);
-        border-radius: 8px;
+        border-radius: 0px;
         transition: 0.5s;
         white-space:nowrap;
         overflow: hidden;
         padding: 1px !important;
+        padding-top: 10px !important;
+        padding-bottom: 10px !important;
+        margin-top: -6px;
     }
     
     .center-over-video:hover {
