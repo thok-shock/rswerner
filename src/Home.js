@@ -9,40 +9,55 @@ class Home extends React.Component {
         this.state = {
             admin: false
         }
+
+        this.listenForR = this.listenForR.bind(this)
+        this.listenForW = this.listenForW.bind(this)
+        this.listenForE = this.listenForE.bind(this);
+        this.listenForRtwo = this.listenForRtwo.bind(this)
     }
 
-    listenForR = (e) => {
-        if (e.key === 'r' && !this.state.admin) {
+    listenForRtwo(e) {
+        if (e.key === 'r') {
+            console.log('pressed r two')
             this.setState({admin: true}, () => {
-                window.removeEventListener('keypress', this.listenForE, false)
-                window.removeEventListener('keypress', this.listenForEtwo, false)
-                window.removeEventListener('keypress', this.listenForW, false)
-                window.removeEventListener('keypress', this.listenForR, false)
+                window.removeEventListener('keypress', this.listenForR)
+                window.removeEventListener('keypress', this.listenForE)
+                window.removeEventListener('keypress', this.listenForW)
+                window.removeEventListener('keypress', this.listenForRtwo)
             })
         }
     }
-    listenForEtwo = (e) => {
-        if (e.key ==='e' && !this.state.admin) {
-            window.addEventListener('keypress', this.listenForR, {once: true})
+
+    listenForE(e) {
+        if (e.key === 'e') {
+            console.log('pressed e')
+            window.addEventListener('keypress', this.listenForRtwo, {once: true})
         }
     }
 
-    listenForW = (e) => {
-        if (e.key === 'w' && !this.state.admin) {
-            window.addEventListener('keypress', this.listenForEtwo, {once: true})
+    listenForW(e) {
+        if (e.key === 'w') {
+            console.log('pressed w')
+            window.addEventListener('keypress', this.listenForE, {once: true})
         }
     }
 
-    listenForE = (e) => {
-        if (e.key === 'w' && !this.state.admin) {
-            window.addEventListener('keypress', this.listenForW, {once: true})
+    listenForR() {
+        if (!this.state.admin) {
+            window.addEventListener('keypress', (e) => {
+                if (e.key === 'r') {
+                    console.log('pressed r')
+                    window.addEventListener('keypress', this.listenForW, {once: true})
+                }
+            })
         }
+        
     }
 
 
 
     render() {
-        this.listenForE();
+        this.listenForR()
         return <FrontPage admin={this.state.admin}/>
     }
 }
