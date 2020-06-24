@@ -1,5 +1,5 @@
 import React from "react";
-import { Card, Button } from "react-bootstrap";
+import { Card, Button, Badge } from "react-bootstrap";
 import EditProjectModal from "./ProjectModals/EditProjectModal";
 
 export default class Project extends React.Component {
@@ -10,7 +10,8 @@ export default class Project extends React.Component {
     };
     this.openEditModal = this.openEditModal.bind(this)
     this.closeEditModal = this.closeEditModal.bind(this)
-    
+    this.determineDisplayUpvoteButton = this.determineDisplayUpvoteButton.bind(this)
+    this.createVote = this.createVote.bind(this)
   }
 
   determineColors() {
@@ -45,6 +46,28 @@ export default class Project extends React.Component {
     }
   }
 
+  createVote() {
+      this.props.createVote(this.props.project.projectID);
+  }
+
+  determineDisplayUpvoteButton() {
+      if (this.props && this.props.voted) {
+          return <Button variant='outline-success' size='sm' disabled className="align-self-right m-1">
+              Voted!
+          </Button>
+      } else {
+        return <Button
+        variant="outline-success"
+        size="sm"
+        className="align-self-right m-1"
+        onClick={this.createVote}
+      >Upvote
+      </Button>
+      }
+  }
+
+  
+
   render() {
     return (
       <Card className="w-24 shadow m-3 project">
@@ -72,13 +95,12 @@ export default class Project extends React.Component {
           </div>
           <div className="d-flex flex-row-reverse">
             {this.determineShowEditButton()}
-            <Button
-              variant="outline-success"
-              size="sm"
-              className="align-self-right m-1"
-            >
-              Upvote
-            </Button>
+            {this.determineDisplayUpvoteButton()}
+            <div className='my-auto' variant='success'>
+            <Badge variant='success' className='my-auto pt-1'>{this.props.project.numVotes}  <span fill='green' className="oi oi-thumb-up mb-1" alt='upvote'></span></Badge>
+                
+            </div>
+            
           </div>
         </Card.Body>
         <EditProjectModal modifyProject={this.props.modifyProject} deleteProject={this.props.deleteProject} hide={this.closeEditModal} project={this.props.project} show={this.state.showEditModal}/>

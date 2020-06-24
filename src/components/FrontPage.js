@@ -16,6 +16,7 @@ export default class FrontPage extends React.Component {
     this.createProject = this.createProject.bind(this);
     this.deleteProject = this.deleteProject.bind(this);
     this.modifyProject = this.modifyProject.bind(this)
+    this.incrementVote = this.incrementVote.bind(this)
 }
 
 
@@ -43,6 +44,17 @@ componentDidMount() {
         alert('Something went wrong')
         console.log(err)
     })
+}
+
+incrementVote(projectID) {
+  let newArray = JSON.parse(JSON.stringify(this.state.projects))
+  newArray = newArray.map(project => {
+      if (project.projectID === projectID) {
+          project.numVotes++
+      }
+      return project;
+  })
+  this.setState({projects: newArray})
 }
 
 openProjectModal() {
@@ -267,7 +279,7 @@ modifyProject(data) {
                 </Form.Group>
                 </Form.Row>
             </Form>
-            <ProjectList projects={this.state.projects} admin={this.props.admin} deleteProject={this.deleteProject} modifyProject={this.modifyProject} />
+            <ProjectList projects={this.state.projects} admin={this.props.admin} deleteProject={this.deleteProject} modifyProject={this.modifyProject} incrementVote={this.incrementVote} />
             </Col>
           </Row>
         </Container>

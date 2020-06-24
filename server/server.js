@@ -28,9 +28,12 @@ const {
   modifyProject,
   createNewProject,
   deleteProject,
+  getVotesOfIP,
+  createUpvote
 } = require("./functions");
 
 const App = express();
+App.set('trust proxy', true)
 
 App.use(
   express.urlencoded({
@@ -53,6 +56,16 @@ imgRouter.post('/', (req, res) => {
     
 })
 
+App.get('/open-iconic/font/css/:uri', (req, res) => {
+  res.sendFile(currPath + '/open-iconic/font/css/' + req.params.uri)
+})
+
+App.get('/open-iconic/font/fonts/:uri', (req, res) => {
+  res.sendFile(currPath + '/open-iconic/font/fonts/' + req.params.uri)
+})
+
+App.get('/open-iconic')
+
 App.get('/', (req, res) => {
     res.sendFile(currPath + 'index.html')
 })
@@ -74,6 +87,32 @@ App.get("/projects", (req, res) => {
       res.status(500);
     });
 });
+
+App.get('/upvote', (req, res) => {
+  getVotesOfIP(req.ip)
+  .then(rows => {res.json(rows)})
+  .catch(err => {
+    console.log(err);
+    res.status(500)
+  })
+})
+
+App.post('/upvote', (req, res) => {
+  console.log(new Date().toISOString().slice(0, 19).replace('T', ' '))
+  let data = {
+    'ipAddress': req.ip,
+    'createdTime': new Date().toISOString().slice(0, 19).replace('T', ' '),
+    'projectID': req.body.projectID
+  }
+  createUpvote(data)
+  .then(row => {
+    res.json(row);
+  })
+  .catch(err => {
+    console.log(err);
+    res.status(500)
+  })
+})
 
 const uploadRouter = express.Router()
 App.use('/upload', uploadRouter);
