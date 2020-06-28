@@ -368,6 +368,21 @@ export default class FrontPage extends React.Component {
               />
             </Col>
           </Row>
+          <Row id='contact-me'>
+            <Col md={12}>
+            <div className='text-center mx-5 mt-5 mb-0'>
+              <h1 className='mb-3'>Contact Me</h1>
+              <p>Oh yeah, you might want to get in touch with me if you'd like to work on a project together!</p>
+              <a href='mailto:ryan.werner@wisc.edu'><Button variant='outline-light' className='m-2'>Email</Button></a>
+              <a href='https://github.com/thok-patrol'><Button variant='outline-light' className='m-2'>Github</Button></a>
+              <a href='https://www.facebook.com/ryan.werner.790/'><Button variant='outline-light' className='m-2'>Facebook</Button></a>
+              <a href='https://www.instagram.com/ryanwerner28/'><Button variant='outline-light' className='m-2'>Instagram</Button></a>
+              <a href='https://youtube.com/DodgeThemAll'><Button variant='outline-light' className='m-2'>YouTube</Button></a>
+              <p className='text-muted mt-5 mb-1'>© 2020 Ryan Werner. Hosted with love.</p>
+            </div>
+            </Col>
+            
+          </Row>
         </Container>
         <div className="tertiary-gray">
           <AddProjectModal
