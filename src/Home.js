@@ -18,7 +18,7 @@ class Home extends React.Component {
 
     listenForRtwo(e) {
         if (e.key === 'r') {
-            console.log('pressed r two')
+            //console.log('pressed r two')
             this.setState({admin: true}, () => {
                 window.removeEventListener('keypress', this.listenForR)
                 window.removeEventListener('keypress', this.listenForE)
@@ -30,14 +30,14 @@ class Home extends React.Component {
 
     listenForE(e) {
         if (e.key === 'e') {
-            console.log('pressed e')
+            //console.log('pressed e')
             window.addEventListener('keypress', this.listenForRtwo, {once: true})
         }
     }
 
     listenForW(e) {
         if (e.key === 'w') {
-            console.log('pressed w')
+            //console.log('pressed w')
             window.addEventListener('keypress', this.listenForE, {once: true})
         }
     }
@@ -46,7 +46,7 @@ class Home extends React.Component {
         if (!this.state.admin) {
             window.addEventListener('keypress', (e) => {
                 if (e.key === 'r') {
-                    console.log('pressed r')
+                    //console.log('pressed r')
                     window.addEventListener('keypress', this.listenForW, {once: true})
                 }
             })

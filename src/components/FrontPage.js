@@ -1,196 +1,249 @@
 import React from "react";
 import { Container, Row, Col, Button, Form } from "react-bootstrap";
-import AddProjectModal from './ProjectModals/AddProjectModal'
+import AddProjectModal from "./ProjectModals/AddProjectModal";
 import ProjectList from "./ProjectList";
+import Fuse from "fuse.js";
 
 export default class FrontPage extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-        addProjectModalOpen: false,
-        projects: []
-    }
+      addProjectModalOpen: false,
+      projects: [],
+      sortedProjects: [],
+      search: "",
+    };
 
-    this.closeProjectModal = this.closeProjectModal.bind(this)
-    this.openProjectModal = this.openProjectModal.bind(this)
+    this.closeProjectModal = this.closeProjectModal.bind(this);
+    this.openProjectModal = this.openProjectModal.bind(this);
     this.createProject = this.createProject.bind(this);
     this.deleteProject = this.deleteProject.bind(this);
-    this.modifyProject = this.modifyProject.bind(this)
-    this.incrementVote = this.incrementVote.bind(this)
-}
+    this.modifyProject = this.modifyProject.bind(this);
+    this.incrementVote = this.incrementVote.bind(this);
+    this.sortProjects = this.sortProjects.bind(this);
+  }
 
-
-
-componentDidMount() {
-    fetch('/projects', {
-        method: 'GET',
-        headers: {
-            'Content-Type': 'application/json'
-        }
+  componentDidMount() {
+    fetch("/projects", {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
     })
-    .then(res => {
+      .then((res) => {
         if (!res && res.status != 200) {
-            throw('Internal Server Error')
+          throw "Internal Server Error";
         } else {
-            return res.json()
+          return res.json();
         }
-    })
-    .then(res => {
-        this.setState({
-            projects: res
+      })
+      .then((res) => {
+        const resWithKeywordsInArray = res.map(project => {
+          project.keywords = project.keywords.split(' ')
+          return project
         })
-    })
-    .catch(err => {
-        alert('Something went wrong')
-        console.log(err)
-    })
-}
+        this.setState({
+          projects: resWithKeywordsInArray,
+        }, () => {
+          this.sortProjects()
+        });
+      })
+      .catch((err) => {
+        alert("Something went wrong");
+        console.log(err);
+      });
+  }
 
-incrementVote(projectID) {
-  let newArray = JSON.parse(JSON.stringify(this.state.projects))
-  newArray = newArray.map(project => {
+  sortProjects() {
+    //console.log("sorting...");
+    let showAll = this.state.search ? false : true
+    if (showAll) {
+      this.setState({sortedProjects: this.state.projects})
+      return;
+    }
+    const options = {
+      includeScore: true,
+      keys: [{name: "keywords", weight: 0.8}, {name: "description", weight: 0.2}],
+      includeMatches: false, //set to true for troubleshooting --ryan
+      threshold: 0.5
+    };
+    const fuse = new Fuse(this.state.projects, options);
+    
+    const results = fuse.search(this.state.search);
+    let sortedResults = results.map(result => {
+      return result.item
+    })
+    //console.log(results)
+    this.setState({ sortedProjects: sortedResults });
+  }
+
+  updateSearch(e) {
+    this.setState({ search: e.target.value }, () => {
+      this.sortProjects();
+    });
+  }
+
+  incrementVote(projectID) {
+    let newArray = JSON.parse(JSON.stringify(this.state.projects));
+    newArray = newArray.map((project) => {
       if (project.projectID === projectID) {
-          project.numVotes++
+        project.numVotes++;
       }
       return project;
-  })
-  this.setState({projects: newArray})
-}
+    });
+    this.setState({ projects: newArray });
+  }
 
-openProjectModal() {
+  openProjectModal() {
     this.setState({
-        addProjectModalOpen: true
-    })
-}
+      addProjectModalOpen: true,
+    });
+  }
 
-closeProjectModal() {
+  closeProjectModal() {
     this.setState({
-        addProjectModalOpen: false
-    })
-}
+      addProjectModalOpen: false,
+    });
+  }
 
-determineRenderAddProjectButton() {
+  determineRenderAddProjectButton() {
     if (this.props && this.props.admin) {
-        return <Button onClick={this.openProjectModal} className='ml-2' variant='outline-success'>Add Project</Button>
+      return (
+        <Button
+          onClick={this.openProjectModal}
+          className="ml-2"
+          variant="outline-success"
+        >
+          Add Project
+        </Button>
+      );
     } else {
-        return null;
+      return null;
     }
-}
-smoothScroll(target) {
+  }
+  smoothScroll(target) {
     var scrollContainer = target;
-    console.log(scrollContainer)
-    do { //find scroll container
-        scrollContainer = scrollContainer.parentNode;
-        if (!scrollContainer) return;
-        scrollContainer.scrollTop += 1;
+    console.log(scrollContainer);
+    do {
+      //find scroll container
+      scrollContainer = scrollContainer.parentNode;
+      if (!scrollContainer) return;
+      scrollContainer.scrollTop += 1;
     } while (scrollContainer.scrollTop == 0);
 
     var targetY = 0;
-    do { //find the top of target relatively to the container
-        if (target == scrollContainer) break;
-        targetY += target.offsetTop;
-    } while (target = target.offsetParent);
+    do {
+      //find the top of target relatively to the container
+      if (target == scrollContainer) break;
+      targetY += target.offsetTop;
+    } while ((target = target.offsetParent));
 
-    scroll = function(c, a, b, i) {
-        i++; if (i > 30) return;
-        c.scrollTop = a + (b - a) / 30 * i;
-        setTimeout(function(){ scroll(c, a, b, i); }, 20);
-    }
+    scroll = function (c, a, b, i) {
+      i++;
+      if (i > 30) return;
+      c.scrollTop = a + ((b - a) / 30) * i;
+      setTimeout(function () {
+        scroll(c, a, b, i);
+      }, 20);
+    };
     // start scrolling
     scroll(scrollContainer, scrollContainer.scrollTop, targetY, 0);
-}
+  }
 
-doThing() {
-  fetch('https://medium.com/feed/@baileyconradt').then(response => response.text())
-  .then(str => new window.DOMParser().parseFromString(str, "text/xml")).then(res => {console.log(res)})
-}
+  doThing() {
+    fetch("https://medium.com/feed/@baileyconradt")
+      .then((response) => response.text())
+      .then((str) => new window.DOMParser().parseFromString(str, "text/xml"))
+      .then((res) => {
+        console.log(res);
+      });
+  }
 
-createProject(data) {
-  fetch('./projects', {
-    method: 'POST',
-    body: data
-  }).then(res => {
-    if (res.status != 200 && res.status != 201) {
-      throw('Encountered Error')
-    } else {
-      return res.json()
-    }
-  })
-  .then(res => {
-    let newProjects = JSON.parse(JSON.stringify(this.state.projects));
-    newProjects.push(res)
-    this.setState({projects: newProjects, addProjectModalOpen: false})
-  })
-  .catch(err => {
-    console.log(err);
-    alert('Something went wrong')
-  })
-}
-
-deleteProject(id, code) {
-  fetch('./projects', {
-    method: 'DELETE',
-    headers: {
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify({projectID: id, secretCode: code})
-  }).then(res => {
-    if (res.status != 200) {
-      throw('Deletion Error')
-    } else {
-      return res.json()
-    }
-  }).then(res => {
-    let newArray = JSON.parse(JSON.stringify(this.state.projects))
-    newArray = newArray.filter(project => {
-      if (parseInt(project.projectID) === parseInt(id)) {
-        return false;
-      } else {
-        return true;
-      }
+  createProject(data) {
+    fetch("./projects", {
+      method: "POST",
+      body: data,
     })
-    console.log(newArray)
-    this.setState({projects: newArray})
-  })
-  .catch(err => {
-    console.log(err);
-    alert('Something went wrong')
-  })
-}
+      .then((res) => {
+        if (res.status != 200 && res.status != 201) {
+          throw "Encountered Error";
+        } else {
+          return res.json();
+        }
+      })
+      .then((res) => {
+        let newProjects = JSON.parse(JSON.stringify(this.state.projects));
+        newProjects.push(res);
+        this.setState({ projects: newProjects, addProjectModalOpen: false });
+      })
+      .catch((err) => {
+        console.log(err);
+        alert("Something went wrong");
+      });
+  }
 
-modifyProject(data) {
-  fetch('/projects', {
-    method: 'PUT',
-    body: data
-  })
-  .then(res => {
-    if (res.status != 200) {
-      throw('Server Error')
-    } else {
-      return res.json()
-    }
-  })
-  .then(res => {
-    let newArray = JSON.parse(JSON.stringify(this.state.projects));
-    newArray = newArray.map(project => {
-      if (project.projectID === res.projectID) {
-        return res;
-      } else {
-        return project;
-      }
+  deleteProject(id, code) {
+    fetch("./projects", {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ projectID: id, secretCode: code }),
     })
-    //console.log(newArray)
-    this.setState({projects: newArray})
+      .then((res) => {
+        if (res.status != 200) {
+          throw "Deletion Error";
+        } else {
+          return res.json();
+        }
+      })
+      .then((res) => {
+        let newArray = JSON.parse(JSON.stringify(this.state.projects));
+        newArray = newArray.filter((project) => {
+          if (parseInt(project.projectID) === parseInt(id)) {
+            return false;
+          } else {
+            return true;
+          }
+        });
+        console.log(newArray);
+        this.setState({ projects: newArray });
+      })
+      .catch((err) => {
+        console.log(err);
+        alert("Something went wrong");
+      });
+  }
 
-  })
-  .catch(err => {
-    console.log(err)
-    alert('Something went wrong')
-  })
-
-}
-
-
+  modifyProject(data) {
+    fetch("/projects", {
+      method: "PUT",
+      body: data,
+    })
+      .then((res) => {
+        if (res.status != 200) {
+          throw "Server Error";
+        } else {
+          return res.json();
+        }
+      })
+      .then((res) => {
+        let newArray = JSON.parse(JSON.stringify(this.state.projects));
+        newArray = newArray.map((project) => {
+          if (project.projectID === res.projectID) {
+            return res;
+          } else {
+            return project;
+          }
+        });
+        //console.log(newArray)
+        this.setState({ projects: newArray });
+      })
+      .catch((err) => {
+        console.log(err);
+        alert("Something went wrong");
+      });
+  }
 
   //https://coolors.co/252323-70798c-f5f1ed-dad2bc-a99985
 
@@ -200,28 +253,48 @@ modifyProject(data) {
         <Container fluid>
           <Row>
             <Col md={12} className="text-center m-auto p-0">
-              <video muted autoPlay loop width='100%' src='./img/ryan-preview.mp4' type='video/mp4'>
-              </video>
+              <video
+                muted
+                autoPlay
+                loop
+                width="100%"
+                src="./img/ryan-preview.mp4"
+                type="video/mp4"
+              ></video>
               <div className="p-5 center-over-video tertiary-gray shadow">
-                <h1 className="display-3 font-weight-normal title-text">Ryan S Werner</h1>
+                <h1 className="display-3 font-weight-normal title-text">
+                  Ryan S Werner
+                </h1>
                 <p className="text-muted font-weight-light">
                   Student Pharmacist, Web Dev, Cameraman, Luna Enthusiast . . .
                 </p>
                 <div>
-                  <Button className="m-2" variant="outline-primary" onClick={e => {this.smoothScroll(document.getElementById('who-am-i'))}}>
+                  <Button
+                    className="m-2"
+                    variant="outline-primary"
+                    onClick={(e) => {
+                      this.smoothScroll(document.getElementById("who-am-i"));
+                    }}
+                  >
                     Get to Know Me
                   </Button>
-                  <Button className="m-2" variant="outline-primary" onClick={e => {this.smoothScroll(document.getElementById('portfolio'))}}>
+                  <Button
+                    className="m-2"
+                    variant="outline-primary"
+                    onClick={(e) => {
+                      this.smoothScroll(document.getElementById("portfolio"));
+                    }}
+                  >
                     See What I've Done
                   </Button>
                 </div>
               </div>
             </Col>
           </Row>
-          <Row className="primary-gray" id='who-am-i'>
-            <Col md={12} className='mb-5'>
+          <Row className="primary-gray" id="who-am-i">
+            <Col md={12} className="mb-5">
               <div className="text-center">
-                <h1 className="m-5 text-underline" >Who Am I?</h1>
+                <h1 className="m-5 text-underline">Who Am I?</h1>
               </div>
               <div className="m-auto">
                 <div className="d-flex flex-row flex-overflow justify-content-center">
@@ -251,40 +324,57 @@ modifyProject(data) {
                     interfaces, and websites of the future.
                   </p>
                 </div>
-                <div className='mt-5'>
-                <p className="about-paragraphs m-auto">
+                <div className="mt-5">
+                  <p className="about-paragraphs m-auto">
                     If we haven't met in person, my personality can best be
                     described as Leslie Knope meets Elon Musk - positive with a
-                    creative spirit! Don't hesitate to upvote my favorite dog while you're here.
+                    creative spirit! Don't hesitate to upvote my favorite dog
+                    while you're here.
                   </p>
                 </div>
               </div>
             </Col>
           </Row>
-          <Row className='tertiary-gray' id='portfolio'>
+          <Row className="tertiary-gray" id="portfolio">
             <Col>
-            <div className='m-5 text-center'>
-            <h1>My Portfolio</h1>
-            <p className='text-muted font-weight-light'>Feel free to browse through a selection of my projects</p>
-            </div>
-            <Form className='m-auto'>
-                <Form.Row className='m-auto justify-content-center'>
-                <Form.Group controlId='search'>
-                    <Form.Control></Form.Control>
-                    
-                </Form.Group>
-                <Form.Group >
-                <Button className='ml-2'>Search</Button>
-                {this.determineRenderAddProjectButton()}
-                </Form.Group>
+              <div className="m-5 text-center">
+                <h1>My Portfolio</h1>
+                <p className="text-muted font-weight-light">
+                  Feel free to browse through a selection of my projects
+                </p>
+              </div>
+              <Form className="m-auto">
+                <Form.Row className="m-auto justify-content-center">
+                  <Form.Group controlId="search">
+                    <Form.Control
+                      value={this.state.search}
+                      onChange={(e) => {
+                        this.updateSearch(e);
+                      }}
+                    ></Form.Control>
+                  </Form.Group>
+                  <Form.Group>
+                    <Button className="ml-2">Search</Button>
+                    {this.determineRenderAddProjectButton()}
+                  </Form.Group>
                 </Form.Row>
-            </Form>
-            <ProjectList projects={this.state.projects} admin={this.props.admin} deleteProject={this.deleteProject} modifyProject={this.modifyProject} incrementVote={this.incrementVote} />
+              </Form>
+              <ProjectList
+                projects={this.state.sortedProjects}
+                admin={this.props.admin}
+                deleteProject={this.deleteProject}
+                modifyProject={this.modifyProject}
+                incrementVote={this.incrementVote}
+              />
             </Col>
           </Row>
         </Container>
-        <div className='tertiary-gray'>
-        <AddProjectModal show={this.state.addProjectModalOpen} close={this.closeProjectModal} createProject={this.createProject} />
+        <div className="tertiary-gray">
+          <AddProjectModal
+            show={this.state.addProjectModalOpen}
+            close={this.closeProjectModal}
+            createProject={this.createProject}
+          />
         </div>
       </div>
     );

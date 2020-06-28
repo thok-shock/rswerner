@@ -1,5 +1,6 @@
 import React from 'react'
 import Project from './Project'
+import { Spinner } from 'react-bootstrap'
 
 export default class ProjectList extends React.Component {
     constructor(props) {
@@ -78,7 +79,9 @@ export default class ProjectList extends React.Component {
                 return <Project key={project.projectID} project={project} admin={this.props.admin} deleteProject={this.props.deleteProject} modifyProject={this.props.modifyProject} myVotes={this.state.myVotes} createVote={this.createVote} voted={didVote} ></Project>
             })
         } else {
-            return <p>Loading ...</p>
+            return <Spinner animation="border" role="status" className='spare-height'>
+            <span className="sr-only">Loading...</span>
+          </Spinner>
         }
     }
 

@@ -115,6 +115,11 @@
     color: black;
 }
 
+.spare-height {
+    margin-top:250px;
+    margin-bottom:250px;
+}
+
 @media only screen and (max-width: 768px) {
     
     .center-over-video {
