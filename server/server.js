@@ -33,7 +33,7 @@ const {
 } = require("./functions");
 
 const App = express();
-App.set('trust proxy', true)
+App.set('trust proxy', false)
 
 App.use(
   express.urlencoded({
@@ -89,7 +89,11 @@ App.get("/projects", (req, res) => {
 });
 
 App.get('/upvote', (req, res) => {
-  getVotesOfIP(req.ip)
+//console.log('REQ.HEADERS ' + req.headers['x-forwarded-for']);
+//console.log('REQ.IP ' + req.ip);
+//console.log(req.remoteAddress)
+
+  getVotesOfIP(req.headers['x-forwarded-for'])
   .then(rows => {res.json(rows)})
   .catch(err => {
     console.log(err);
@@ -100,7 +104,7 @@ App.get('/upvote', (req, res) => {
 App.post('/upvote', (req, res) => {
   console.log(new Date().toISOString().slice(0, 19).replace('T', ' '))
   let data = {
-    'ipAddress': req.ip,
+    'ipAddress': req.headers['x-forwarded-for'],
     'createdTime': new Date().toISOString().slice(0, 19).replace('T', ' '),
     'projectID': req.body.projectID
   }
