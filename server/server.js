@@ -12,7 +12,7 @@ const mime = require(
 )
 var storage = multer.diskStorage({
   destination: function (req, file, cb) {
-    cb(null, '../dist/uploads')
+    cb(null, path.join(__dirname, '../dist/uploads/'))
   },
   filename: function (req, file, cb) {
     crypto.pseudoRandomBytes(16, function (err, raw) {
