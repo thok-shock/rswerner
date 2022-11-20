@@ -1,5 +1,6 @@
 //lets not get too complicated this time around
 
+require('dotenv').config()
 const express = require("express");
 const db = require("./database");
 const path = require('path')
@@ -32,7 +33,18 @@ const {
   createUpvote
 } = require("./functions");
 
+
 const App = express();
+
+if (process.env.NODE_ENV === 'development') {
+  const webpack = require('webpack');
+  const middleware = require('webpack-dev-middleware')
+  const webpackConfig = require('../webpack.config')
+  const compiler = webpack(webpackConfig)
+  App.use(middleware(compiler))
+}
+
+
 App.set('trust proxy', false)
 
 App.use(

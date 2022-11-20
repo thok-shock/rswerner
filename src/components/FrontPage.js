@@ -3,6 +3,7 @@ import { Container, Row, Col, Button, Form } from "react-bootstrap";
 import AddProjectModal from "./ProjectModals/AddProjectModal";
 import ProjectList from "./ProjectList";
 import Fuse from "fuse.js";
+import NewProjectModal from "./NewProjectModals/NewProjectModal";
 
 export default class FrontPage extends React.Component {
   constructor(props) {
@@ -385,11 +386,7 @@ export default class FrontPage extends React.Component {
           </Row>
         </Container>
         <div className="tertiary-gray">
-          <AddProjectModal
-            show={this.state.addProjectModalOpen}
-            close={this.closeProjectModal}
-            createProject={this.createProject}
-          />
+          <NewProjectModal show={this.state.addProjectModalOpen} onHide={() => {this.setState({addProjectModalOpen: false})}} />
         </div>
       </div>
     );

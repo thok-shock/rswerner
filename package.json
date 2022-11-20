@@ -10,6 +10,7 @@
   "license": "ISC",
   "dependencies": {
     "bootstrap": "^4.5.0",
+    "dotenv": "^16.0.3",
     "express": "^4.17.1",
     "express-fileupload": "^1.1.7-alpha.3",
     "fuse.js": "^6.3.1",
@@ -17,7 +18,9 @@
     "mysql": "^2.18.1",
     "react": "^16.13.1",
     "react-bootstrap": "^1.0.1",
-    "react-dom": "^16.13.1"
+    "react-dom": "^16.13.1",
+    "webpack-dev-middleware": "^5.3.3",
+    "webpack-hot-middleware": "^2.25.3"
   },
   "devDependencies": {
     "@babel/core": "^7.10.2",
